@@ -1,0 +1,31 @@
+{
+    "teams": {
+        "team_name": {
+            "name": "Team Name",
+            "city": "Team City",
+            "color" : {
+                "primary": "#HEXCOLOR",
+                "secondary": "#HEXCOLOR"
+            },
+            "subteams": ["TEAM 1", "TEAM 2"]
+        },
+        "team_name_2": {
+            "name": "Team Name 2",
+            "city": "Team City 2",
+            "color" : {
+                "primary": "#HEXCOLOR",
+                "secondary": "#HEXCOLOR"
+            },
+            "subteams": ["TEAM A", "TEAM B", "TEAM C"]
+        },
+        "team_name_3": {
+            "name": "Team Name 3",
+            "city": "Team City 3",
+            "color" : {
+                "primary": "#HEXCOLOR",
+                "secondary": "#HEXCOLOR"
+            }
+        }
+    }
+}
+

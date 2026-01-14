@@ -1,0 +1,40 @@
+# Node.js files
+.next
+node_modules/
+
+# Python cache
+__pycache__/
+.mypy_cache/
+
+# env files
+.env*
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+config.toml
+
+# Project specific
+output_scorecasts
+assets/*.png
+assets/fonts/*.ttf
+assets/fonts/*.otf
+assets/logos/*.png
+assets/players/*/
+assets/result_overlays/*.png
+
+db.json

@@ -1,0 +1,1 @@
+This folder contains the team logos you want to use with transparent backgrounds - use PNG format.

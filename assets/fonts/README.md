@@ -1,0 +1,1 @@
+This folder contains font files you want to use in the Scorecast application.

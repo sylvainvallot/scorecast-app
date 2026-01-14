@@ -1,0 +1,26 @@
+[config]
+my_team_id = ""
+
+[scoreboard]
+square_size_px = 250
+fallback_font = ""
+
+[scores]
+text_pts = 240
+font = ""
+
+[half_time]
+height_px = 50
+text_pts = 40
+font = ""
+
+[sub_teams]
+height_px = 40
+text_pts = 30
+font = ""
+
+[playercard]
+height_px = 100
+text_pts = 80
+font = ""
+padding_px = 20

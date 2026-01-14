@@ -1,0 +1,1 @@
+This folder contains overlays for each result type used in Scorecast.
