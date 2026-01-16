@@ -6,10 +6,14 @@ const nextConfig: NextConfig = {
     return [
       {
         source: "/api/py/:path*",
-        destination: "http://localhost:8000/api/py/:path*",
+        destination: process.env.NODE_ENV === "production"
+          ? "http://scorecast-backend:8000/api/py/:path*"
+          : "http://localhost:8000/api/py/:path*",
       },
+      
     ];
-  }
+  },
+  output: "standalone",
 };
 
 export default nextConfig;

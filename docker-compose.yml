@@ -1,0 +1,34 @@
+services:
+  frontend:
+    container_name: scorecast-frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    networks:
+      - scorecast-network
+    depends_on:
+      - backend
+  
+  backend:
+    container_name: scorecast-backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    networks:
+      - scorecast-network
+    volumes:
+      - ./config.toml:/config.toml
+      - ./db.json:/db.json
+      - ./assets:/assets
+      - output_scorecasts:/output_scorecasts
+
+volumes:
+  output_scorecasts:
+
+networks:
+  scorecast-network:
+    driver: bridge
