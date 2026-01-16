@@ -16,6 +16,7 @@ class Settings(BaseSettings):
 
 
 class Paths(BaseSettings):
+    USER_PLAYERS_CSV: Path = BASE_DIR / "players.csv"
     BASE_DIR: Path = Path(__file__).resolve().parents[2]
     ASSETS_PATH: Path = BASE_DIR / "assets"
     FONTS_PATH: Path = ASSETS_PATH / "fonts"
