@@ -38,3 +38,5 @@ assets/players/*/
 assets/result_overlays/*.png
 
 db.json
+player_selector_state.json
+players.csv
