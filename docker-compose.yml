@@ -16,17 +16,25 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
+    ports:
+      - "8000"
     networks:
       - scorecast-network
     volumes:
-      - ./config.toml:/config.toml
-      - ./db.json:/db.json
+      # - ./config.toml:/config.toml
+      # - ./db.json:/db.json
+      - config:/config
       - output_scorecasts:/output_scorecasts
       - assets:/assets
+    healthcheck:
+      test: "curl -f http://localhost:8000/api/py/utils/status || exit 1"
+      timeout: 10s
+      start_period: 10s
 
 volumes:
   output_scorecasts:
   assets:
+  config:
 
 networks:
   scorecast-network:

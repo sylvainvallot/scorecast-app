@@ -11,8 +11,8 @@ class Settings(BaseSettings):
     DESCRIPTION: str = "API for Scorecast application"
     VERSION: str = "1.0.0"
     API_STR: str = "/api/py"
-    USER_CONFIG: dict = tomllib.load(open(BASE_DIR / "config.toml", "rb"))
-    USER_DB: dict = json.load(open(BASE_DIR / "db.json", "r"))
+    USER_CONFIG: dict = tomllib.load(open(BASE_DIR / "config" / "config.toml", "rb"))
+    USER_DB: dict = json.load(open(BASE_DIR / "config" / "db.json", "r"))
 
 
 class Paths(BaseSettings):
