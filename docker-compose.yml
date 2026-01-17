@@ -16,18 +16,17 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    ports:
-      - "8000:8000"
     networks:
       - scorecast-network
     volumes:
       - ./config.toml:/config.toml
       - ./db.json:/db.json
-      - ./assets:/assets
       - output_scorecasts:/output_scorecasts
+      - assets:/assets
 
 volumes:
   output_scorecasts:
+  assets:
 
 networks:
   scorecast-network:
