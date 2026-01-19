@@ -14,18 +14,20 @@ const PERIOD_OPTIONS = [
 ];
 
 export default function PeriodSelector({
+    className,
     onSelect,
 }: {
+    className?: string;
     onSelect: (period: string) => void;
 }) {
     return (
-        <Field>
+        <Field className={className}>
             <FieldLabel htmlFor="period">
                 Period
             </FieldLabel>
             <Select
                 defaultValue="full_time"
-                onOpenChange={(value) => onSelect(value)}
+                onValueChange={(value) => onSelect(value)}
             >
                 <SelectTrigger id="period">
                     <SelectValue placeholder="Select period" />

@@ -5,4 +5,5 @@ export type Scoreboard = {
     awayScore: number;
     homeSubTeam?: string;
     awaySubTeam?: string;
+    period?: string;
 };

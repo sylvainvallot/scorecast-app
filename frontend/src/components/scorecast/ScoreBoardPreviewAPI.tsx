@@ -24,6 +24,7 @@ export default function ScoreBoardPreviewAPI({ payload }: { payload: Scoreboard 
             away_score: payload.awayScore,
             home_subteam: payload.homeSubTeam,
             away_subteam: payload.awaySubTeam,
+            period: payload.period,
         };
 
         if (payload.homeSubTeam === "principal") {
@@ -62,6 +63,7 @@ export default function ScoreBoardPreviewAPI({ payload }: { payload: Scoreboard 
         payload.homeScore,
         payload.homeSubTeam,
         payload.homeTeam,
+        payload.period,
     ]);
 
     return (

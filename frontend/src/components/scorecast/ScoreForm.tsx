@@ -56,9 +56,10 @@ export default function ScoreForm() {
         homeSubTeam: homeSubTeam,
         awaySubTeam: awaySubTeam,
         teamType: teamType,
+        period: period,
     };
 
-    const result = useMemo(() => {
+    const result = useMemo<"win" | "loss" | "draw" | null>(() => {
         if (homeScore === null || awayScore === null) return null;
         if (homeScore > awayScore) return "win";
         if (homeScore < awayScore) return "loss";
@@ -69,7 +70,6 @@ export default function ScoreForm() {
         fetch("/api/py/teams/my-team")
             .then((res) => res.json())
             .then((data) => {
-                console.log("Fetched HERE team data:", data);
                 setMyTeam(data);
             })
             .catch(console.error);
@@ -79,7 +79,6 @@ export default function ScoreForm() {
         fetch("/api/py/teams/list")
             .then((res) => res.json())
             .then((data) => {
-                console.log("Fetched team list:", data);
                 setTeamList(data);
             })
             .catch(console.error);
@@ -87,11 +86,11 @@ export default function ScoreForm() {
 
     async function generateScoreCast(e: React.FormEvent) {
         e.preventDefault();
-        setIsGenerating(true);
         if (!myTeam || awayScore === null || homeScore === null || !awayTeam) {
             alert("Please fill in all required fields.");
             return;
         }
+        setIsGenerating(true);
 
         const scoreCastPayload = {
             "home_team": myTeam.id,
@@ -101,6 +100,7 @@ export default function ScoreForm() {
             "home_subteam": homeSubTeam,
             "away_subteam": awaySubTeam,
             "team_type": teamType,
+            "period": period,
         };
 
         if (homeSubTeam === "principal") {
@@ -160,7 +160,7 @@ export default function ScoreForm() {
                             Match Score
                             {result && <ResultBadge result={result} />}
                         </FieldLegend>
-                        <FieldGroup className="grid grid-cols-3 gap-4">
+                        <FieldGroup className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                             <Field>
                                 <FieldLabel htmlFor="home-score">
                                     Home
@@ -214,17 +214,17 @@ export default function ScoreForm() {
                                     Enter the away team score
                                 </FieldDescription>
                             </Field>
-                            <PeriodSelector onSelect={setPeriod} />
+                            <PeriodSelector onSelect={setPeriod} className="col-span-2 sm:col-span-1" />
                         </FieldGroup>
                     </FieldSet>
 
-                    <FieldSet className="flex flex-row">
+                    <FieldSet className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <SubTeamSelector
                             teamId={myTeam ? myTeam.id : null}
                             teamList={teamList}
                             onSelect={setHomeSubTeam}
                             placeholder={`${myTeam?.name} sub-team`}
-                            title={`Select ${myTeam?.name} sub-team`}
+                            title={`${myTeam?.name} sub-team`}
                         />
                         {
                             homeSubTeam === "principal" ||
