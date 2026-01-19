@@ -13,6 +13,7 @@ from app.api.routes.teams import get_team_data, my_team
 import app.scorecast.main as sc
 from app.scorecast.players import generate_playercard
 from app.config import paths
+from app.api.player_selector import select_random_player
 
 router = APIRouter(prefix="/scorecast", tags=["scorecast"])
 
@@ -47,12 +48,19 @@ async def generate_scorecast(payload: ScorecastPayload):
             score=payload.away_score,
             color=away_team_data.color,
             subteam=payload.away_subteam if payload.away_subteam else None
-        )
+        ),
+        period=payload.period
     )
 
     result = game_result(payload.home_score, payload.away_score)
 
     filename = f"scorecast_{result}_{payload.home_team}_vs_{payload.away_team}"
+
+    player = select_random_player(
+        subteam=payload.home_subteam, sex=payload.team_type
+    )
+    # Implement player folder name structure
+    # Retrieve player videos folder
 
     sc.generate_video(
         filename, scoreboard, result, "test"
@@ -136,7 +144,8 @@ async def test_scoreboard(payload: ScorecastPayload):
             score=payload.away_score,
             color=away_team_data.color,
             subteam=payload.away_subteam if payload.away_subteam else None
-        )
+        ),
+        period=payload.period
     )
 
     scoreboard_bytes = BytesIO()

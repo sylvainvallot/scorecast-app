@@ -9,7 +9,7 @@ import {
 
 const PERIOD_OPTIONS = [
     { value: "full_time", label: "Full Time" },
-    { value: "first_half", label: "End of 1st Period" },
+    { value: "half_time", label: "Half Time" },
     // { value: "second_half", label: "Second Half" },
 ];
 

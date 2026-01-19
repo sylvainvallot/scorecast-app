@@ -53,6 +53,7 @@ class ScorecastPayload(BaseModel):
     home_subteam: Optional[str] = ""
     away_subteam: Optional[str] = ""
     team_type: Optional[str] = "mixed"
+    period: Optional[str] = "full_time"
     player: Optional[str] = ""
     model_config = {
         "json_schema_extra": {
@@ -67,6 +68,7 @@ class ScorecastPayload(BaseModel):
                 "away_score": randint(0, 50),
                 "home_subteam": "",
                 "away_subteam": "",
+                "period": "full_time",
                 "player": ""
             }
         }

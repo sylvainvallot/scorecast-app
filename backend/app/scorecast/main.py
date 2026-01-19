@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+from typing import Optional
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont
 from moviepy.video.io.VideoFileClip import VideoFileClip
@@ -13,7 +14,9 @@ USER_CONFIG = settings.USER_CONFIG
 
 
 def generate_scoreboard(
-    home_team: TeamScoreBoard, away_team: TeamScoreBoard,
+    home_team: TeamScoreBoard,
+    away_team: TeamScoreBoard,
+    period: Optional[str] = "full_time"
 ) -> Image.Image:
 
     SQUARE_COUNT = 4
@@ -119,7 +122,7 @@ def generate_scoreboard(
 
         ht_font = ImageFont.truetype(
             paths.FONTS_PATH / f"{HALF_TIME_FONT}", size=HALF_TIME_TEXT_PTS)
-        ht_text = "SCORE FINAL"
+        ht_text = USER_CONFIG["half_time"][period]
 
         ht_center = (img_width // 2, HT_H // 2)
 
