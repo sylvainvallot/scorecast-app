@@ -23,6 +23,7 @@ import ResultBadge from "./ResultBadge";
 import Loading from "./Loading";
 import SubTeamSelector from "./SubTeamSelector";
 import ScoreBoardPreviewAPI from "./ScoreBoardPreviewAPI";
+import TeamType from "./TeamType";
 
 export default function ScoreForm() {
     const [myTeam, setMyTeam] = useState<Team>();
@@ -40,6 +41,8 @@ export default function ScoreForm() {
         undefined,
     );
 
+    const [teamType, setTeamType] = useState<string>("mixed");
+
     const [isGenerating, setIsGenerating] = useState<boolean>(false);
 
     const ScoreBoardPayload = {
@@ -49,6 +52,7 @@ export default function ScoreForm() {
         awayScore: awayScore !== null ? awayScore : 0,
         homeSubTeam: homeSubTeam,
         awaySubTeam: awaySubTeam,
+        teamType: teamType,
     };
 
     const result = useMemo(() => {
@@ -93,10 +97,12 @@ export default function ScoreForm() {
             "away_score": awayScore,
             "home_subteam": homeSubTeam,
             "away_subteam": awaySubTeam,
+            "team_type": teamType,
         };
 
         if (homeSubTeam === "principal") {
             scoreCastPayload.home_subteam = undefined;
+            scoreCastPayload.team_type = "mixed";
         }
         if (awaySubTeam === "principal") {
             scoreCastPayload.away_subteam = undefined;
@@ -208,7 +214,7 @@ export default function ScoreForm() {
                         </FieldGroup>
                     </FieldSet>
 
-                    <FieldSet>
+                    <FieldSet className="flex flex-row">
                         <SubTeamSelector
                             teamId={myTeam ? myTeam.id : null}
                             teamList={teamList}
@@ -216,6 +222,12 @@ export default function ScoreForm() {
                             placeholder={`${myTeam?.name} sub-team`}
                             title={`Select ${myTeam?.name} sub-team`}
                         />
+                        {
+                            homeSubTeam === "principal" ||
+                            homeSubTeam == undefined ? (
+                                <TeamType onSelect={setTeamType} />
+                            ) : null
+                        }
                     </FieldSet>
                     <FieldSet>
                         <FieldLegend>Select Away Team</FieldLegend>

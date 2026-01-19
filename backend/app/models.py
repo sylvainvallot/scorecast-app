@@ -52,6 +52,7 @@ class ScorecastPayload(BaseModel):
     away_score: int
     home_subteam: Optional[str] = ""
     away_subteam: Optional[str] = ""
+    team_type: Optional[str] = "mixed"
     player: Optional[str] = ""
     model_config = {
         "json_schema_extra": {

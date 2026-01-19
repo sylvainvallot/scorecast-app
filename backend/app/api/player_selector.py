@@ -81,7 +81,7 @@ def select_random_player(
     filtered_players = players
 
     # Filtering by sex has priority over subteam
-    if sex:
+    if sex != "mixed" and sex is not None:
         filtered_players = [p for p in filtered_players if p["sex"] == sex]
 
         selected = select_from_filtered_list(

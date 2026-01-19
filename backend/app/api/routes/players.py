@@ -1,3 +1,4 @@
+from typing import Optional
 from fastapi import APIRouter
 import app.api.player_selector as player_selector
 
@@ -12,10 +13,11 @@ router = APIRouter(prefix="/players", tags=["players"])
 
 
 @router.get("/select-player")
-async def select_player():
+async def select_player(
+    subteam: Optional[str] = None, sex: Optional[str] = None
+):
     """Select a random player who hasn't been selected before."""
-    # player = player_selector.select_random_player()
-    player = player_selector.select_random_player(subteam="TEAM B")
-    # player = player_selector.select_random_player(sex="F")
-    # player = player_selector.select_random_player(subteam="TEAM A", sex="F")
+    player = player_selector.select_random_player(
+        subteam=subteam, sex=sex
+    )
     return player
