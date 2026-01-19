@@ -24,6 +24,7 @@ import Loading from "./Loading";
 import SubTeamSelector from "./SubTeamSelector";
 import ScoreBoardPreviewAPI from "./ScoreBoardPreviewAPI";
 import TeamType from "./TeamType";
+import PeriodSelector from "./PeriodSelector";
 
 export default function ScoreForm() {
     const [myTeam, setMyTeam] = useState<Team>();
@@ -44,6 +45,8 @@ export default function ScoreForm() {
     const [teamType, setTeamType] = useState<string>("mixed");
 
     const [isGenerating, setIsGenerating] = useState<boolean>(false);
+
+    const [period, setPeriod] = useState<string>("full_time");
 
     const ScoreBoardPayload = {
         homeTeam: myTeam ? myTeam.id : "",
@@ -157,7 +160,7 @@ export default function ScoreForm() {
                             Match Score
                             {result && <ResultBadge result={result} />}
                         </FieldLegend>
-                        <FieldGroup className="grid grid-cols-2 gap-4">
+                        <FieldGroup className="grid grid-cols-3 gap-4">
                             <Field>
                                 <FieldLabel htmlFor="home-score">
                                     Home
@@ -211,6 +214,7 @@ export default function ScoreForm() {
                                     Enter the away team score
                                 </FieldDescription>
                             </Field>
+                            <PeriodSelector onSelect={setPeriod} />
                         </FieldGroup>
                     </FieldSet>
 
