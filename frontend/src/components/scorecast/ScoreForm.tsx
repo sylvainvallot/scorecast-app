@@ -84,7 +84,7 @@ export default function ScoreForm() {
             .catch(console.error);
     }, []);
 
-    async function generateScoreCast(e: React.FormEvent) {
+    async function generateScoreCast(e: React.FormEvent, isStatic: boolean = false) {
         e.preventDefault();
         if (!myTeam || awayScore === null || homeScore === null || !awayTeam) {
             alert("Please fill in all required fields.");
@@ -111,8 +111,10 @@ export default function ScoreForm() {
             scoreCastPayload.away_subteam = undefined;
         }
 
+        const endpoint = isStatic ? "/api/py/scorecast/generate-static" : "/api/py/scorecast/generate";
+
         try {
-            const response = await fetch("/api/py/scorecast/generate", {
+            const response = await fetch(endpoint, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -128,7 +130,8 @@ export default function ScoreForm() {
 
             const disposition = response.headers.get("Content-Disposition");
 
-            let filename = `scorecast_${Date.now()}.mp4`;
+            let filename = isStatic ? `scorecast_${Date.now()}.png` : `scorecast_${Date.now()}.mp4`;
+            
             if (disposition) {
                 const match = disposition.match(/filename="(.+)"/);
                 if (match && match[1]) {
@@ -276,11 +279,20 @@ export default function ScoreForm() {
                     {/* <ScorecastPreview data={preview} /> */}
                     <Field orientation="horizontal">
                         <Button
-                            onClick={(e) => generateScoreCast(e)}
+                            onClick={(e) => generateScoreCast(e, true)}
+                            variant="default"
                             disabled={isGenerating}
                         >
                             Generate ScoreCast
                         </Button>
+                        {/* <Button
+                            onClick={(e) => generateScoreCast(e)}
+                            variant="outline"
+                            // disabled={isGenerating}
+                            disabled={true}
+                            >
+                            Generate ScoreCast
+                        </Button> */}
                         <Button
                             variant="outline"
                             type="button"

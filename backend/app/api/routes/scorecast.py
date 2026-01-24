@@ -1,4 +1,6 @@
 from io import BytesIO
+from PIL import Image
+from typing import Optional
 from fastapi import APIRouter, Response
 from fastapi.responses import FileResponse
 from app.models import (
@@ -25,18 +27,16 @@ def game_result(home_score: int, away_score: int) -> str:
     return result
 
 
-@router.post("/generate", response_class=Response)
-async def generate_scorecast(payload: ScorecastPayload):
-    """Generate a game scorecast reel using the provided payload."""
-
-    # Generate the scoreboard
+def build_scoreboard(
+    payload: ScorecastPayload, style: Optional[str] = "default"
+) -> Image.Image:
     home_team_data = get_team_data(payload.home_team)
     away_team_data = get_team_data(payload.away_team)
 
     if not home_team_data or not away_team_data:
         raise ValueError("Invalid team data")
 
-    scoreboard = sc.generate_scoreboard(
+    return sc.generate_scoreboard(
         TeamScoreBoard(
             id=payload.home_team,
             score=payload.home_score,
@@ -49,8 +49,17 @@ async def generate_scorecast(payload: ScorecastPayload):
             color=away_team_data.color,
             subteam=payload.away_subteam if payload.away_subteam else None
         ),
-        period=payload.period
+        period=payload.period,
+        style=style
     )
+
+
+@router.post("/generate", response_class=Response)
+async def generate_scorecast(payload: ScorecastPayload):
+    """Generate a game scorecast reel using the provided payload."""
+
+    # Generate the scoreboard
+    scoreboard = build_scoreboard(payload)
 
     result = game_result(payload.home_score, payload.away_score)
 
@@ -72,6 +81,32 @@ async def generate_scorecast(payload: ScorecastPayload):
         filename=f"{filename}.mp4",
         headers={
             "Content-Disposition": f"attachment; filename={filename}.mp4"
+        },
+    )
+
+
+@router.post("/generate-static", response_class=Response)
+async def generate_static_scorecast(payload: ScorecastPayload):
+    """Generate a static game scorecast image using the provided payload."""
+
+    # Generate the scoreboard
+    scoreboard = build_scoreboard(payload, style="modern")
+
+    filename = f"scorecast_{payload.home_team}_vs_{payload.away_team}"
+
+    image = sc.generate_image(
+        scoreboard, payload.home_subteam
+    )
+
+    scoreboard_bytes = BytesIO()
+    image.save(scoreboard_bytes, format="PNG")
+    scoreboard_bytes.seek(0)
+
+    return Response(
+        content=scoreboard_bytes.getvalue(),
+        media_type="image/png",
+        headers={
+            "Content-Disposition": f"inline; filename={filename}.png"
         },
     )
 
@@ -126,27 +161,7 @@ async def generate_playercard_endpoint(
 async def test_scoreboard(payload: ScorecastPayload):
     """Generate a scoreboard image for testing purposes."""
 
-    home_team_data = get_team_data(payload.home_team)
-    away_team_data = get_team_data(payload.away_team)
-
-    if not home_team_data or not away_team_data:
-        raise ValueError("Invalid team data")
-
-    scoreboard = sc.generate_scoreboard(
-        TeamScoreBoard(
-            id=payload.home_team,
-            score=payload.home_score,
-            color=home_team_data.color,
-            subteam=payload.home_subteam if payload.home_subteam else None
-        ),
-        TeamScoreBoard(
-            id=payload.away_team,
-            score=payload.away_score,
-            color=away_team_data.color,
-            subteam=payload.away_subteam if payload.away_subteam else None
-        ),
-        period=payload.period
-    )
+    scoreboard = build_scoreboard(payload, style="modern")
 
     scoreboard_bytes = BytesIO()
     scoreboard.save(scoreboard_bytes, format="PNG")

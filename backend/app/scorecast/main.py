@@ -2,7 +2,7 @@ import os
 from pathlib import Path
 from typing import Optional
 import numpy as np
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw, ImageFont, ImageFilter
 from moviepy.video.io.VideoFileClip import VideoFileClip
 from moviepy.video.VideoClip import ImageClip
 from moviepy.video.compositing.CompositeVideoClip import CompositeVideoClip
@@ -16,7 +16,8 @@ USER_CONFIG = settings.USER_CONFIG
 def generate_scoreboard(
     home_team: TeamScoreBoard,
     away_team: TeamScoreBoard,
-    period: Optional[str] = "full_time"
+    period: Optional[str] = "full_time",
+    style: Optional[str] = "default",
 ) -> Image.Image:
 
     SQUARE_COUNT = 4
@@ -40,21 +41,36 @@ def generate_scoreboard(
         x2 = x1 + SQUARE_SIZE
         draw.rectangle([x1, 0, x2, img_height], fill=color)
 
-    def load_logo(path: Path) -> Image.Image:
+    def logo_path(team_id: str, style: Optional[str] = "default") -> Path:
+        logo_file = f"{team_id}_{style}.png"
+        logo_path = paths.TEAMS_LOGO_PATH / logo_file
+        if not os.path.exists(logo_path):
+            logo_path = paths.TEAMS_LOGO_PATH / f"{team_id}.png"
+        return logo_path
+
+    def load_logo(path: Path, style: Optional[str] = "default") -> Image.Image:
         LOGO_MARGIN = 40
+        if style == "modern":
+            LOGO_MARGIN = 0
         logo = Image.open(path).convert("RGBA")
         logo = logo.resize(
             (SQUARE_SIZE - LOGO_MARGIN, SQUARE_SIZE - LOGO_MARGIN))
         return logo
 
+    POSITION_OFFSET = 20
+
+    if style == "modern":
+        POSITION_OFFSET = 0
+
     # Load logos
-    home_logo = load_logo(paths.TEAMS_LOGO_PATH / f"{home_team.id}.png")
+    home_logo = load_logo(logo_path(home_team.id, style), style)
 
-    img.paste(home_logo, (20, 20), home_logo)
+    img.paste(home_logo, (POSITION_OFFSET, POSITION_OFFSET), home_logo)
 
-    if os.path.exists(paths.TEAMS_LOGO_PATH / f"{away_team.id}.png"):
-        away_logo = load_logo(paths.TEAMS_LOGO_PATH / f"{away_team.id}.png")
-        img.paste(away_logo, (SQUARE_SIZE * 3 + 20, 20), away_logo)
+    if os.path.exists(logo_path(away_team.id, style)):
+        away_logo = load_logo(logo_path(away_team.id, style), style)
+        img.paste(away_logo, (SQUARE_SIZE * 3 +
+                  POSITION_OFFSET, POSITION_OFFSET), away_logo)
     else:
         # FallBack to First Letter if Logo Missing
         draw_text_center(
@@ -249,3 +265,28 @@ def generate_video(
         fps=30,
         audio=False
     )
+
+
+def generate_image(
+    scoreboard: Image.Image,
+    subteam: Optional[str] = None,
+) -> Image.Image:
+
+    bg = Image.open(paths.ASSETS_PATH / "static_team_a.png").convert("RGBA")
+
+    if subteam:
+        # Load background based on subteam
+        bg_path = paths.ASSETS_PATH / \
+            f"static_{subteam.lower().replace(' ', '_')}.png"
+        if os.path.exists(bg_path):
+            bg = Image.open(bg_path).convert("RGBA")
+
+    # Position scoreboard at bottom center
+    sb_width, sb_height = scoreboard.size
+    bg_width, bg_height = bg.size
+    position = ((bg_width - sb_width) // 2, bg_height - sb_height - 50)
+
+    # Composite scoreboard onto background
+    combined = bg.copy()
+    combined.paste(scoreboard, position, scoreboard)
+    return combined
