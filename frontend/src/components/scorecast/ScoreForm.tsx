@@ -84,7 +84,10 @@ export default function ScoreForm() {
             .catch(console.error);
     }, []);
 
-    async function generateScoreCast(e: React.FormEvent, isStatic: boolean = false) {
+    async function generateScoreCast(
+        e: React.FormEvent,
+        isStatic: boolean = false,
+    ) {
         e.preventDefault();
         if (!myTeam || awayScore === null || homeScore === null || !awayTeam) {
             alert("Please fill in all required fields.");
@@ -111,7 +114,9 @@ export default function ScoreForm() {
             scoreCastPayload.away_subteam = undefined;
         }
 
-        const endpoint = isStatic ? "/api/py/scorecast/generate-static" : "/api/py/scorecast/generate";
+        const endpoint = isStatic
+            ? "/api/py/scorecast/generate-static"
+            : "/api/py/scorecast/generate";
 
         try {
             const response = await fetch(endpoint, {
@@ -130,22 +135,35 @@ export default function ScoreForm() {
 
             const disposition = response.headers.get("Content-Disposition");
 
-            let filename = isStatic ? `scorecast_${Date.now()}.png` : `scorecast_${Date.now()}.mp4`;
-            
+            let filename = isStatic
+                ? `scorecast_${new Date().toISOString()}.png`
+                : `scorecast_${new Date().toISOString()}.mp4`;
+
             if (disposition) {
                 const match = disposition.match(/filename="(.+)"/);
                 if (match && match[1]) {
                     filename = match[1];
                 }
             }
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement("a");
-            a.href = url;
-            a.download = filename;
-            document.body.appendChild(a);
-            a.click();
-            a.remove();
-            window.URL.revokeObjectURL(url);
+
+            const isMobile = /iPhone|iPad|iPod|Android/i.test(
+                navigator.userAgent,
+            );
+
+            const url = URL.createObjectURL(blob);
+
+            if (isMobile) {
+                window.open(url, "_blank");
+            } else {
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+            }
+
+            URL.revokeObjectURL(url);
             setIsGenerating(false);
         } catch (error) {
             console.error("Error generating ScoreCast:", error);
@@ -217,7 +235,10 @@ export default function ScoreForm() {
                                     Enter the away team score
                                 </FieldDescription>
                             </Field>
-                            <PeriodSelector onSelect={setPeriod} className="col-span-2 sm:col-span-1" />
+                            <PeriodSelector
+                                onSelect={setPeriod}
+                                className="col-span-2 sm:col-span-1"
+                            />
                         </FieldGroup>
                     </FieldSet>
 
@@ -229,12 +250,10 @@ export default function ScoreForm() {
                             placeholder={`${myTeam?.name} sub-team`}
                             title={`${myTeam?.name} sub-team`}
                         />
-                        {
-                            homeSubTeam === "principal" ||
-                            homeSubTeam == undefined ? (
-                                <TeamType onSelect={setTeamType} />
-                            ) : null
-                        }
+                        {homeSubTeam === "principal" ||
+                                homeSubTeam == undefined
+                            ? <TeamType onSelect={setTeamType} />
+                            : null}
                     </FieldSet>
                     <FieldSet>
                         <FieldLegend>Select Away Team</FieldLegend>
@@ -285,14 +304,16 @@ export default function ScoreForm() {
                         >
                             Generate ScoreCast
                         </Button>
-                        {/* <Button
+                        {
+                            /* <Button
                             onClick={(e) => generateScoreCast(e)}
                             variant="outline"
                             // disabled={isGenerating}
                             disabled={true}
                             >
                             Generate ScoreCast
-                        </Button> */}
+                        </Button> */
+                        }
                         <Button
                             variant="outline"
                             type="button"
